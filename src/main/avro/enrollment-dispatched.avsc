@@ -1,0 +1,22 @@
+{
+  "type": "record",
+  "name": "EnrollmentDispatchedEvent",
+  "namespace": "at",
+  "fields": [
+    {
+      "name": "enrollmentId",
+      "type": "long"
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "enum",
+        "name": "EnrollmentDispatchStatus",
+        "symbols": [
+          "ACCEPTED",
+          "REJECTED"
+        ]
+      }
+    }
+  ]
+}

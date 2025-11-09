@@ -1,0 +1,76 @@
+server:
+  port: 9096
+  shutdown: graceful
+  tomcat:
+    connection-timeout: 3s
+    keep-alive-timeout: 20s
+    threads:
+      max: 200
+      min-spare: 10
+
+spring:
+  application:
+    name: dispatcher-service
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  config:
+    import: ${configserver.import}
+  cloud:
+    config:
+      import-check:
+        enabled: false
+      request-connect-timeout: 5000
+      request-read-timeout: 5000
+      fail-fast: false
+      retry:
+        max-attempts: 6
+        initial-interval: 1000
+        max-interval: 2000
+        multiplier: 1.1
+      label: monitoring
+
+  kafka:
+    bootstrap-servers: localhost:9097
+    consumer:
+      group-id: ${spring.application.name}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        specific.avro.reader: true
+        schema.registry.url: http://localhost:8081
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+    listener:
+      ack-mode: manual
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        schema.registry.url: http://localhost:8081
+        enable.idempotence: true
+        acks: all
+
+configserver:
+  import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:9095}
+
+kafkaprops:
+  enrollment-dispatch-topic: v1.enrollments_dispatch
+  enrollment-placed-topic: v1.public.enrollments_outbox
+  replication-factor: 1
+  partitions-count: 3
+  nack-sleep-duration: 100ms
+
+external:
+  loki-url: http://localhost:3100/loki/api/v1/push
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        all: true
