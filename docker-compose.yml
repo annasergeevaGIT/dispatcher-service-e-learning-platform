@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   config-server-e-learning-platform:
     image: "config-server-e-learning-platform"

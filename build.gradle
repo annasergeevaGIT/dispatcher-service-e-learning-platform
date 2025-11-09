@@ -26,7 +26,7 @@ repositories {
 }
 
 ext {
-    springCloudVersion ='2023.0.1'
+    springCloudVersion ='2025.0.0'
     avroSerializerVersion='7.6.0'
     avroVersion='1.11.3'
     lokiAppenderVersion = '1.5.1'
