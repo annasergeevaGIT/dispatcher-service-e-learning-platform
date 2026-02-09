@@ -3,6 +3,7 @@ package at.dispatcher_service.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
@@ -18,6 +19,11 @@ import java.time.Duration;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@ConditionalOnProperty(
+        name = "app.kafka.enabled",
+        havingValue = "true",
+        matchIfMissing = true
+)
 public class DispatcherService {
 
     private final KafkaTemplate<String, EnrollmentDispatchedEvent> kafkaTemplate;
